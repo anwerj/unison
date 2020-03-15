@@ -78,17 +78,30 @@ var Processor = function (module) {
     }
 
     var drafts = {
+        /**
+         *
+         * @param i
+         * @param d
+         * @returns {{ref: (*|{id}), grid: {x: number, y: number}, from: {}, id: *, label: *, to: {}, source: {all: (function(): Array), index: (function(*): *), value: (function(*): *), push: push}, type: *, _: string, desc: SVGDescElement, target: {all: (function(): Array), index: (function(*): *), value: (function(*): *), push: push}}}
+         */
         node : function (i, d) {
 
             console.log(i, d);
             var draft = {
                 _       : 'node',
+                ref     : d.id      && (d.ref || d),
                 id      : i.id,
                 label   : (i.label  || d.label) || i.id,
                 desc    : i.desc    || d.desc,
                 type    : i.type    || d.type,
                 to      : {},
                 from    : {},
+                grid    : {
+                    x : 0,
+                    y : 0,
+                },
+                target  : new links(i.t),
+                source  : new links(i.s),
             };
 
             return draft;
@@ -112,8 +125,8 @@ var Processor = function (module) {
     }
 
     var error = function (msg, data) {
-        console.log(data, nodes._, edges._);
-        throw new Error('Processing Error, ' + msg);
+        console.error('Processing Error', data, nodes._, edges._);
+        throw new Error(msg);
     }
 
     return {
@@ -221,7 +234,20 @@ var Processor = function (module) {
                                 break;
                             }
 
-                            prevEdge = prevEdge.from && prevEdge.from.from;
+                            // There is node at previous to edge and
+                            // There is only one source for that node
+                            if ((prevEdge.from && prevEdge.from.source.length()) === 1)
+                            {
+                                prevEdge = prevEdge.from.source.index(0);
+                            }
+                            else if ((prevEdge.from && prevEdge.from.source.length()) > 1)
+                            {
+                                error('Previous node has mutlipe sources', prevEdge.from);
+                            }
+                            else
+                            {
+                                error('No previous node found', prevEdge.from)
+                            }
 
                             // Meaning we have found another previous edge
                             if ('number' === typeof prevEdge.id)
@@ -288,24 +314,27 @@ var Processor = function (module) {
                     error('edge.from needs from be sting or object', draft);
                 }
 
-                draft.from = from;
-                draft.to = to;
+                // Set Edge as node.to to edge.from
+
+                console.log(draft.from);
+                // from.to[(new String(draft.value || draft.id)).toString()] = draft;
+                from.target.push(draft, draft.value || draft.id);
+
+                // Before actually pushing the from, we need to set the grid
+                // But since we are not creating from in the flow, we do not need to set the grid
+                nodes.push(from);
+
+                // Set Edge as node.from to edge.to
+                // to.from = draft;
+                to.source.push(draft, draft.value || draft.id);
+                nodes.push(to);
 
                 // At this point we have all ids defined
                 // edge.id, edge.from.id and edge.to.id
 
+                draft.from = from;
+                draft.to = to;
                 edges.push(draft);
-
-                // Set Edge as node.from to edge.to
-                draft.to.from = draft;
-                nodes.push(draft.to);
-
-                // Set Edge as node.to to edge.from
-
-                console.log(draft.from);
-                draft.from.to[(new String(draft.value || draft.id)).toString()] = draft;
-                nodes.push(draft.from);
-
             });
 
             console.log(nodes._, edges._);
@@ -317,4 +346,45 @@ var Processor = function (module) {
             module.run(nodes._, edges._);
         }
     }
+}
+
+var links = function (expected) {
+    var e = (expected === undefined) ? undefined : parseInt(expected);
+    var l = [];
+    var v = [];
+
+    return {
+
+        _ : l,
+
+        length : function() {
+            return l.length;
+        },
+
+        all : function() {
+            return l;
+        },
+
+        index : function (index) {
+            return l[index];
+        },
+
+        push : function (item, value) {
+            v.push((new String(value)).toString());
+            l.push(item);
+        },
+
+        value : function (value) {
+            return this.index(v.indexOf((new String(value)).toString()));
+        },
+
+        anomaly : function (from) {
+            console.debug(e, this.length(), from);
+            if (e === undefined)
+            {
+                return null;
+            }
+            return this.length() - e;
+        }
+    };
 }

@@ -25,12 +25,20 @@ body,
     z-index: 1;
     border-left: 1px solid lightgray;
     background: whitesmoke;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: scroll;
 }
-#text>textarea {
+#text>#editor {
     margin-top: 20px;
+    width: 100%;
+    max-height: 70vh;
+    min-height: 80%;
+    font-size: 14px;
+}
+#text>#json {
+    margin-top: 20px;
+    height: 20vh;
     min-width: 100%;
-    min-height: 90vh;
     border: none;
     font-family: monospace;
     font-size: 14px;

@@ -1,0 +1,41 @@
+---
+nodes:
+  0s1t: {s: 0, t: 1}
+  1s2t: {s: 1, t: 2}
+  1s3t: {s: 1, t: 3}
+  2s1t: {s: 2, t: 1}
+  2s2t: {s: 2, t: 2}
+  2s3t: {s: 2, t: 3}
+  4s0t: {s: 4, t: 0}
+#total: {s:12,t:12}
+
+edges:
+  - to: 1s2t # tt
+    from: 0s1t #
+
+  - to: 2s3t # s, tt
+
+  - to: 2s1t #
+
+  - to: 1s3t #
+
+  - to: 2s2t #
+
+  - to: 4s0t #
+
+  - to: 4s0t
+    from: 1s2t
+
+  - to: 4s0t
+    from: 2s3t # s, t
+
+  - to: 4s0t
+    from: 1s3t
+
+  - to: 2s2t
+    from: 2s3t
+
+  - to: 2s1t
+
+  - to: 2s3t
+    from: 1s3t

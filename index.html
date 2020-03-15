@@ -1,20 +1,25 @@
 <html>
 <head>
+    <title>Unison, unifying JSON for artisans</title>
     <link rel="stylesheet" href="assets/unison.css">
     <link rel="icon" href="/favicon.png">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.min.js"></script>
     <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script type="text/javascript" src="https://ace.c9.io/build/src/ace.js"></script>
+    <script type="text/javascript" src="src/vis-network/transformer.js"></script>
     <script type="text/javascript" src="src/vis-network/module.js"></script>
     <script type="text/javascript" src="src/processor.js"></script>
 
 </head>
 <body>
 <div id="text">
-    Hi, this is good. <br>
-    <select id="urls"></select>
-    <button id="refresh">Refresh</button>
-    <textarea class="prettyprint"></textarea>
+    Unison, unifying JSON for artisans. <br>
+    <select id="urls"></select><br>
+    <button id="refresh">Refresh(meta+R)</button>
+    <button id="redraw">Redraw(meta+S)</button>
+    <div id="editor"></div>
+    <textarea id="json" class="prettyprint"></textarea>
 </div>
 
 <div id="mynetwork"></div>
@@ -22,14 +27,21 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-
+        var editor;
         var network;
         var _ = {
             refreshing : false,
             script : null,
         };
 
-        var run = function (config) {
+        var run = function () {
+            var raw = editor.getValue().trim();
+            console.log(raw);
+
+            var config = jsyaml.load(raw);
+
+            $('#text #json').val(JSON.stringify(config, null, 2));
+
             // Create display module
             var module = VisNetworkModule(config);
 
@@ -42,42 +54,49 @@
             {
                 network.destroy();
             }
+            if ('object' === typeof editor)
+            {
+                editor.destroy();
+            }
 
             var url = $('#urls').val() + '?' + (force === true ? (new Date().getTime()) : '')
 
-            var config = {};
+            var raw = null;
+            var json = {};
 
             _.refreshing = true;
 
             $.get(url, function (data)
             {
-                if (url.indexOf('.json?') > 0)
-                {
-                    config = data;
-                }
-                else if ((url.indexOf('.json5?') > 0) || (url.indexOf('.yaml?') > 0))
-                {
-                    config = jsyaml.load(data)
-                }
-                else
-                {
-                    alert('invalid file extension')
-                }
                 _.refreshing = false;
-                $('#text>textarea').html(JSON.stringify(config, null, 2));
-                run(config);
+                if ('object' === typeof data)
+                {
+                    data = JSON.stringify(data);
+                }
+
+                $('#editor').html(data);
+
+                // pass options to ace.edit
+                editor = ace.edit('editor', {
+                    mode: "ace/mode/yaml",
+                    selectionStyle: "text",
+                    tabSize : 2,
+                    useSoftTabs : true,
+                    keyboardHandler : 'vim'
+                });
+
+                run();
             });
-
-
         }
 
         var setUrl = function(url)
         {
             var urls = [
-                'http://self.mytools.in/unison/examples/basic_3_nodes.json',
-                'http://self.mytools.in/unison/examples/complex_nodes.json',
-                'http://self.mytools.in/unison/examples/complex_upi.json5',
-                'http://self.mytools.in/unison/examples/complex_upi.yaml',
+                new URL('examples/basic_3_nodes.json', location).toString(),
+                new URL('examples/complex_nodes.json', location).toString(),
+                new URL('examples/complex_upi.json5', location).toString(),
+                new URL('examples/complex_upi.yaml', location).toString(),
+                new URL('examples/complex_members.yaml', location).toString(),
             ];
             var index = (urls.length - 1)
 
@@ -101,6 +120,30 @@
                 return;
             }
             refresh(true);
+        });
+        $('#redraw').click(function () {
+            run();
+        });
+
+        $(window).bind('keydown', function(event) {
+            if (event.ctrlKey || event.metaKey) {
+                var letter = String.fromCharCode(event.which).toLowerCase();
+                switch (letter) {
+                    case 's':
+                        event.preventDefault();
+                        run();
+                        break;
+                    case 'r':
+                        if (! event.shiftKey)
+                        {
+                            event.preventDefault();
+                            refresh(true);
+                        }
+                        break;
+                    default:
+                        console.log('Key pressed', letter);
+                }
+            }
         });
 
         setUrl();
