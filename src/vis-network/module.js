@@ -69,7 +69,18 @@ var VisNetworkModule = function () {
             },
             physics: false,
             layout: {
-
+                hierarchical: {
+                    enabled: true,
+                    levelSeparation : -100,
+                    nodeSpacing : 600,
+                    treeSpacing : 200,
+                    blockShifting: true,
+                    edgeMinimization : true,
+                    parentCentralization : true,
+                    direction: 'UD',
+                    sortMethod: 'directed',
+                    shakeTowards: 'roots'
+                }
             }
         };
         var network = new vis.Network(container, data, options);
