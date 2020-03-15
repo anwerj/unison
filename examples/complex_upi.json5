@@ -1,0 +1,56 @@
+{
+  nodes : {
+    merchant : {},
+    customer : {},
+    razorpay : {},
+  },
+
+  edges: [
+    {
+      from: 'merchant',
+      to : {
+        id: 'vpa_question',
+        label : 'Would you like to give us your vpa',
+        type : 'decision',
+      },
+    },
+    {
+      from: 'vpa_question',
+      label : true,
+      to : {'customer': {
+
+      }},
+    },
+    {
+      from: 'customer',
+      label : '',
+      to : 'merchant',
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

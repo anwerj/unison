@@ -1,0 +1,62 @@
+<html>
+<head>
+    <link href="assets/unison.css" rel="stylesheet">
+    <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+<body>
+<div id="text">
+    <div id="title">
+        <h1>Vis Network</h1>
+        <h2>Migrating from 5.4.1 to 6.0.0</h2>
+        <h3>Edit Edge Without Drag</h3>
+    </div>
+
+    <p>
+        The editWithoutDrag function receives from and to ids. According to the
+        documentation it has always been that way. But in 5.4.1 (and for 3 year prio
+        to this release) the manipulation.editEdge.editEdgeWithoutDrag function
+        received internal node objects instead. As of 6.0.0 the behavior is in line
+        with the documentation and other similar methods that is the from and to
+        properties now contain the ids directly.
+    </p>
+
+    <p>
+        Old code that no longer works:
+    </p>
+
+    <pre>
+const options = {
+  manipulation: {
+    editEdge: {
+      editWithoutDrag({ from, to }) {
+        const fromId = from.id
+        const toId = to.id
+        &#x2026;
+      }
+    }
+  }
+}
+      </pre>
+
+    <p>
+        New code that achieves the same result:
+    </p>
+
+    <pre>
+const options = {
+  manipulation: {
+    editEdge: {
+      editWithoutDrag({ from: fromId, to: toId }) {
+        &#x2026;
+      }
+    }
+  }
+}
+      </pre
+      >
+</div>
+
+<div id="mynetwork"></div>
+<script type="text/javascript" src="examples/visjs/edit_edge_without_grag.js"></script>
+</body>
+</html>

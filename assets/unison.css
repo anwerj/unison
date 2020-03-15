@@ -1,0 +1,42 @@
+html,
+body,
+#mynetwork {
+    margin: 0px;
+    padding: 0px;
+}
+
+#mynetwork {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 25%;
+    min-height: 100vh;
+    border-right: 1px solid lightgray;
+    background: white;
+}
+
+#text {
+    position: absolute;
+    padding: 1em 0 1em 1em;
+    top: 0;
+    right: 0;
+    width: 25%;
+    z-index: 1;
+    border-left: 1px solid lightgray;
+    background: whitesmoke;
+    min-height: 100vh;
+}
+#text>textarea {
+    margin-top: 20px;
+    min-width: 100%;
+    min-height: 90vh;
+    border: none;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 6px;
+}
+
+#title {
+    margin-bottom: 5em;
+}

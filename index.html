@@ -1,0 +1,112 @@
+<html>
+<head>
+    <link rel="stylesheet" href="assets/unison.css">
+    <link rel="icon" href="/favicon.png">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.min.js"></script>
+    <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script type="text/javascript" src="src/vis-network/module.js"></script>
+    <script type="text/javascript" src="src/processor.js"></script>
+
+</head>
+<body>
+<div id="text">
+    Hi, this is good. <br>
+    <select id="urls"></select>
+    <button id="refresh">Refresh</button>
+    <textarea class="prettyprint"></textarea>
+</div>
+
+<div id="mynetwork"></div>
+<div id="myscript"></div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var network;
+        var _ = {
+            refreshing : false,
+            script : null,
+        };
+
+        var run = function (config) {
+            // Create display module
+            var module = VisNetworkModule(config);
+
+            network = new Processor(module).load(config).run();
+        }
+
+        var refresh = function(force)
+        {
+            if ('object' === typeof network)
+            {
+                network.destroy();
+            }
+
+            var url = $('#urls').val() + '?' + (force === true ? (new Date().getTime()) : '')
+
+            var config = {};
+
+            _.refreshing = true;
+
+            $.get(url, function (data)
+            {
+                if (url.indexOf('.json?') > 0)
+                {
+                    config = data;
+                }
+                else if ((url.indexOf('.json5?') > 0) || (url.indexOf('.yaml?') > 0))
+                {
+                    config = jsyaml.load(data)
+                }
+                else
+                {
+                    alert('invalid file extension')
+                }
+                _.refreshing = false;
+                $('#text>textarea').html(JSON.stringify(config, null, 2));
+                run(config);
+            });
+
+
+        }
+
+        var setUrl = function(url)
+        {
+            var urls = [
+                'http://self.mytools.in/unison/examples/basic_3_nodes.json',
+                'http://self.mytools.in/unison/examples/complex_nodes.json',
+                'http://self.mytools.in/unison/examples/complex_upi.json5',
+                'http://self.mytools.in/unison/examples/complex_upi.yaml',
+            ];
+            var index = (urls.length - 1)
+
+            if (url && !(urls.findIndex(url)))
+            {
+                urls.push(url);
+                index = urls.findIndex(url);
+            }
+
+            var html = '';
+            for (var i = 0; i < urls.length; i++)
+            {
+                html += '<option value="' + urls[i] + '" ' + ((i === index) && 'selected') + '>' + urls[i] + '</option>';
+            }
+            $('#urls').html(html);
+        }
+
+        $('#refresh').click(function () {
+            if (_.refreshing)
+            {
+                return;
+            }
+            refresh(true);
+        });
+
+        setUrl();
+        refresh(true);
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+    "nodes" : {
+        "node1" : {
+            "label" : "Node 1",
+            "desc" : "This is node 1"
+        },
+        "node2" : {
+            "label" : "Node 2",
+            "desc" : "This is node 2"
+        },
+        "node3":  {
+            "label" : "Node 3",
+            "desc" : "This is node 3"
+        }
+    },
+
+    "edges" : [
+        {
+            "label" : "node1 to node2",
+            "desc" : "This is a description\nYONO",
+            "from" : {
+                "id" : "node1"
+            },
+            "to" : "node3"
+        },
+        {
+            "label" : "node1 to node3",
+            "from" : "node1",
+            "to" : "node2"
+        },
+        {
+            "label" : "node3 to node1",
+            "from" : "node3",
+            "to" : {
+                "id" : "node3"
+            }
+        }
+    ]
+}

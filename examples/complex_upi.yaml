@@ -1,0 +1,64 @@
+---
+nodes:
+  merchant: {}
+  customer: {}
+  aggregator: {}
+  payeePsp: {}
+  npci:     {}
+  payerPsp: {}
+
+edges:
+  - to:
+      id: vpa_question
+      label: Has vpa?
+      type: decision
+    from: merchant
+
+  # collect
+  - to: { $ref: merchant, label : Merchant sends VPA, background: '#666666'}
+    from: vpa_question
+    value: 1
+  - to: {$ref: aggregator, label: Starting collect flow}
+  - to: {$ref: payeePsp, label: Send a collect request}
+  - to: {$ref: npci, label: Send a collect request}
+  - to: {$ref: payerPsp, label: Sends a collect request}
+  - to: {$ref: customer, label: Customer accepts?, type: decision}
+  # collect, success
+  - to: {$ref: payerPsp, label: Sends customer bank account details}
+    value: 1
+  - to: {$ref: npci, label: Start Debit/Credit}
+  - to: {$ref: payeePsp, label: Informs transaction status}
+
+  # collect, failure
+  - to: {$ref: payerPsp, label: Sends failure to NPCI}
+    value: 0
+  - to: {$ref: npci, label: Sends failure message}
+
+  #intent
+  - to:
+      label: Merchant doesn't send VPA
+    from: vpa_question
+    value: 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

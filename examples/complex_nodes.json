@@ -1,0 +1,85 @@
+{
+  "nodes": {
+    "node1": {
+      "label": "Node 1",
+      "desc": "This is node 1"
+    },
+    "node2": {
+      "label": "Node 2",
+      "desc": "This is node 2"
+    },
+    "node3": {
+      "label": "Node 3",
+      "desc": "This is node 3"
+    }
+  },
+  "edges": [
+    {
+      "label": "0",
+      "desc": "This is a desc\nYONO",
+      "from": {
+        "id": "node1"
+      },
+      "to": "node2"
+    },
+    {
+      "label": "1",
+      "from": "node1",
+      "to": "node3"
+    },
+    {
+      "desc": "node3 to node1",
+      "from": "node3",
+      "to": {
+        "id": "node3"
+      }
+    },
+    {
+      "desc": "node1 to node4",
+      "from": "node1",
+      "to": "node4"
+    },
+    {
+      "desc": "node4 to node6",
+      "from": "node4",
+      "to": {
+        "id": "node5",
+        "desc": "Hi, I am a vertice"
+      }
+    },
+    {
+      "desc": "Duplicate of note2",
+      "from": {
+        "id": "node4",
+        "label": "New Label"
+      },
+      "to": {
+        "label": "New not, without id"
+      }
+    },
+    {
+      "from" : "node4",
+      "to" : {
+        "id" : "question",
+        "label" : "Do you like what you see?",
+        "type" : "decision"
+      }
+    },
+    {
+      "from" : "question",
+      "label" : "Yes",
+      "to" : {
+        "label" : "you seem nice, can you help?",
+        "type" : "terminal"
+      }
+    },
+    {
+      "from" : "question",
+      "label" : "no",
+      "to" : {
+        "label" : "you seem critical, can you help?",
+        "type" : "terminal"
+      }
+    }
+  ]
+}
