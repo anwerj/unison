@@ -86,7 +86,7 @@ var Processor = function (module) {
          */
         node : function (i, d) {
 
-            console.log(i, d);
+            console.debug(i, d);
             var draft = {
                 _       : 'node',
                 ref     : d.id      && (d.ref || d),
@@ -102,13 +102,14 @@ var Processor = function (module) {
                 },
                 target  : new links(i.t),
                 source  : new links(i.s),
+                img     : i.img || null
             };
 
             return draft;
         },
         edge : function (i, d) {
 
-            console.log(i, d);
+            console.debug(i, d);
             var draft = {
                 _       : 'edge',
                 id      : i.id,
@@ -316,7 +317,7 @@ var Processor = function (module) {
 
                 // Set Edge as node.to to edge.from
 
-                console.log(draft.from);
+                console.debug(draft.from);
                 // from.to[(new String(draft.value || draft.id)).toString()] = draft;
                 from.target.push(draft, draft.value || draft.id);
 
@@ -337,7 +338,7 @@ var Processor = function (module) {
                 edges.push(draft);
             });
 
-            console.log(nodes._, edges._);
+            console.debug(nodes._, edges._);
 
             return this;
         },

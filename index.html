@@ -3,6 +3,7 @@
     <title>Unison, unifying JSON for artisans</title>
     <link rel="stylesheet" href="assets/unison.css">
     <link rel="icon" href="/favicon.png">
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.min.js"></script>
     <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
@@ -14,12 +15,14 @@
 </head>
 <body>
 <div id="text">
-    Unison, unifying JSON for artisans. <br>
-    <select id="urls"></select><br>
-    <button id="refresh">Refresh(meta+R)</button>
-    <button id="redraw">Redraw(meta+S)</button>
+    <div id="options">
+        Unison, <small>unifying JSON for artisans. </small><br><br>
+        <select id="urls"></select><br>
+        <button id="refresh">Refresh</button>
+        <button id="redraw">Redraw</button>
+    </div>
     <div id="editor"></div>
-    <textarea id="json" class="prettyprint"></textarea>
+    <pre id="json" class="prettyprint"></pre>
 </div>
 
 <div id="mynetwork"></div>
@@ -29,6 +32,7 @@
     $(document).ready(function () {
         var editor;
         var network;
+        var localKey;
         var _ = {
             refreshing : false,
             script : null,
@@ -36,11 +40,12 @@
 
         var run = function () {
             var raw = editor.getValue().trim();
-            console.log(raw);
+
+            localStorage.setItem('current:' + localKey, raw);
 
             var config = jsyaml.load(raw);
 
-            $('#text #json').val(JSON.stringify(config, null, 2));
+            $('#text #json').text(JSON.stringify(config, null, 2));
 
             // Create display module
             var module = VisNetworkModule(config);
@@ -48,7 +53,27 @@
             network = new Processor(module).load(config).run();
         }
 
-        var refresh = function(force)
+        var loadEditor = function (data) {
+
+            $('#editor').html(data);
+
+            // pass options to ace.edit
+            editor = ace.edit('editor', {
+                theme: 'ace/theme/tomorrow_night_eighties',
+                mode: "ace/mode/yaml",
+                selectionStyle: "text",
+                tabSize : 2,
+                useSoftTabs : true,
+                keyboardHandler : 'vim',
+                fontSize: '13px',
+            });
+            editor.container.style.lineHeight = 2
+            editor.renderer.updateFontSize()
+
+            run();
+        }
+
+        var refresh = function(remote, force)
         {
             if ('object' === typeof network)
             {
@@ -57,6 +82,19 @@
             if ('object' === typeof editor)
             {
                 editor.destroy();
+            }
+
+            localKey   = $('#urls').val();
+            var local = localStorage.getItem('current:' + localKey);
+
+            if ((typeof local === 'string'))
+            {
+                if (remote === false)
+                {
+                    loadEditor(local);
+
+                    return;
+                }
             }
 
             var url = $('#urls').val() + '?' + (force === true ? (new Date().getTime()) : '')
@@ -74,18 +112,7 @@
                     data = JSON.stringify(data);
                 }
 
-                $('#editor').html(data);
-
-                // pass options to ace.edit
-                editor = ace.edit('editor', {
-                    mode: "ace/mode/yaml",
-                    selectionStyle: "text",
-                    tabSize : 2,
-                    useSoftTabs : true,
-                    keyboardHandler : 'vim'
-                });
-
-                run();
+                loadEditor(data);
             });
         }
 
@@ -97,6 +124,7 @@
                 new URL('examples/complex_upi.json5', location).toString(),
                 new URL('examples/complex_members.yaml', location).toString(),
                 new URL('examples/complex_upi.yaml', location).toString(),
+                new URL('examples/complex_nodes.yaml', location).toString(),
             ];
             var index = (urls.length - 1)
 
@@ -119,7 +147,11 @@
             {
                 return;
             }
-            refresh(true);
+            if (confirm('Are you sure you want to refresh, it will remove any local changes'))
+            {
+                // Remote and fresh only
+                refresh(true, true);
+            }
         });
         $('#redraw').click(function () {
             run();
@@ -128,6 +160,13 @@
         $(window).bind('keydown', function(event) {
             if (event.ctrlKey || event.metaKey) {
                 var letter = String.fromCharCode(event.which).toLowerCase();
+
+                switch (event.which) {
+                    case 13:
+                        // Enter is considered, save
+                        letter = 's';
+                }
+
                 switch (letter) {
                     case 's':
                         event.preventDefault();
@@ -137,17 +176,19 @@
                         if (! event.shiftKey)
                         {
                             event.preventDefault();
-                            refresh(true);
+                            // Local first else fresh
+                            refresh(false, true);
                         }
                         break;
                     default:
-                        console.log('Key pressed', letter);
+                        console.debug('Key pressed', letter, event.which);
                 }
             }
         });
 
         setUrl();
-        refresh(true);
+        // Local first else cached
+        refresh(false, false);
     });
 
 </script>

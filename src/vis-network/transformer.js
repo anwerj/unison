@@ -52,6 +52,13 @@ var VisNetworkTransformer = function (nodes, edges) {
             node.y     = 0;
         }
 
+        if (item.img)
+        {
+            console.log(item.img);
+            node.shape = 'image';
+            node.image = item.img;
+        }
+
         return node;
     };
 
