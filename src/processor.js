@@ -90,6 +90,7 @@ var Processor = function (module) {
             var draft = {
                 _       : 'node',
                 ref     : d.id      && (d.ref || d),
+                icon    : d.icon    && (d.icon || ''),
                 id      : i.id,
                 label   : (i.label  || d.label) || i.id,
                 desc    : i.desc    || d.desc,
@@ -102,7 +103,6 @@ var Processor = function (module) {
                 },
                 target  : new links(i.t),
                 source  : new links(i.s),
-                img     : i.img || null
             };
 
             return draft;

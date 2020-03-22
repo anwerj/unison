@@ -66,3 +66,38 @@ body,
     margin: 0 2px 5px 0;
     font-size: 11px;
 }
+
+#node-container{
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 200px;
+    z-index: 1;
+    height: 100vh;
+    overflow: scroll;
+    color: #2d2d2d;
+}
+.node{
+    background: #fa8f90;
+    width: 300px;
+    color: white;
+    border-radius: 8px;
+}
+.node .node-header{
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 2px solid white;
+    padding: 8px 12px;
+}
+.node .node-body{
+    font-size: 14px;
+    padding: 6px;
+}
+svg>text{
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+}

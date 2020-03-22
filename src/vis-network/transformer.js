@@ -3,60 +3,57 @@ var VisNetworkTransformer = function (nodes, edges) {
     var toNode = function (item, index) {
         // Default for 1 children
         var shape = 'box';
-        var label = ' ' + item.label + ' ';
         var toLength = item.target.all().length;
-
-        if (item.type === 'decision')
-        {
-            if (toLength > 2)
-            {
-                shape = 'box';
-            }
-            else if (toLength === 2)
-            {
-                shape = 'box';
-            }
-            else if (toLength === 0)
-            {
-                shape = 'circle';
-                label = ' ' + label + ' ';
-            }
-        }
-
-        if (item.ref && item.ref.label)
-        {
-            label = item.ref.label + ' |     ' + label
-        }
+        var headerIcon = (item.ref && item.ref.icon) ? item.ref.icon : (item.icon || 'bell');
+        var headerLabel = (item.ref && item.ref.label) ? item.ref.label : item.label;
+        var bodyLabel = (item.ref && item.ref.label) ? item.label : null;
 
         if (item.target.anomaly('target:' + item.id))
         {
-            label += ' | t:' + item.target.anomaly();
+            bodyLabel += ' | t:' + item.target.anomaly();
         }
         if (item.source.anomaly('source:' + item.id))
         {
-            label += ' | s:' + item.source.anomaly();
+            bodyLabel += ' | s:' + item.source.anomaly();
         }
 
+        var symbol = document.getElementById('sprites-solid').contentDocument.getElementById('cube');
+
+        if (!symbol)
+        {
+            console.log(symbol, headerIcon);
+        }
+        else
+        {
+            var viewBox = symbol.getAttribute('viewBox');
+            var pathD   = symbol.getElementsByTagName('path')[0].getAttribute('d');
+        }
+
+        var svg = '<svg id="svg-' + item.id +'" width="300" height="70" xmlns="http://www.w3.org/2000/svg">' +
+            '<rect x="0" y="0" width="300" height="70" style="fill:white;opacity:1" />' +
+            '<svg width="30" height="30" x="5" y="5" viewBox="'+ viewBox +'" ><path style="fill: #fa8f90" d="'+ pathD +'"></path></svg>' +
+            '<text style="fill: #fa8f90" font-size="20" font-family="Verdana" x="60" y="30">' + headerLabel + '</text>' +
+            (bodyLabel ? '<text fill="rgb(0,0,0,0.8)" font-size="14" font-family="Verdana" x="6" y="56">' + bodyLabel + '</text>' : '') +
+            '</svg>';
+
+        $('#node-container').append(svg);
+
+        var img = window.btoa((new XMLSerializer().serializeToString(document.getElementById('svg-' + item.id))));
+
+        console.debug(svg, img);
         var node = {
             id: item.id,
             title: item.desc && item.desc.replace('\n', "<br>"),
-            label: label,
-            shape: shape,
-        }
+            shape: 'image',
+            image: 'data:image/svg+xml;base64,' + img,
+        };
 
         if (index === 0)
         {
             node.fixed = true;
-            node.physics =  false
+            node.physics =  false;
             node.x     = 0;
             node.y     = 0;
-        }
-
-        if (item.img)
-        {
-            console.log(item.img);
-            node.shape = 'image';
-            node.image = item.img;
         }
 
         return node;

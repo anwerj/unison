@@ -8,25 +8,28 @@ var VisNetworkModule = function (config) {
         nodes : {
             font : {
                 size : 14,
-                face : 'courier',
-                multi : 'md',
-            },
-            color: {
-                border  : '#aaaaaa',
-                background : '#ffffff',
-                highlight: {
-                    border  : '#3e3e3e',
-                    background : '#fefefe',
-                },
-            },
-            scaling: {
-                min: 10,
-                max: 30
+                face : 'courier'
             },
             shapeProperties: {
                 borderRadius : 2,
+                useImageSize : true,
+                useBorderWithImage : true,
             },
             physics: false,
+            borderWidth: 1,
+            imagePadding: { left: 2, top: 2, right: 2, bottom: 2},
+            color: {
+                border: "rgba(0,0,0,0.1)",
+                background: "white",
+                highlight: {
+                    border: "black",
+                    background: "white"
+                },
+                hover: {
+                    border: "orange",
+                    background: "grey"
+                }
+            },
         },
         edges:{
             arrows: {
@@ -49,8 +52,8 @@ var VisNetworkModule = function (config) {
         layout: {
             hierarchical: {
                 enabled: true,
-                levelSeparation : -100,
-                nodeSpacing : 600,
+                levelSeparation : 150,
+                nodeSpacing : 800,
                 treeSpacing : 200,
                 blockShifting: true,
                 edgeMinimization : true,

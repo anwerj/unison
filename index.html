@@ -1,22 +1,32 @@
 <html>
 <head>
     <title>Unison, unifying JSON for artisans</title>
-    <link rel="stylesheet" href="assets/unison.css">
     <link rel="icon" href="/favicon.png">
+    <link rel="stylesheet" href="assets/unison.css">
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.min.js"></script>
     <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
     <script type="text/javascript" src="https://ace.c9.io/build/src/ace.js"></script>
+    <script type="text/javascript" src="assets/base64.js"></script>
     <script type="text/javascript" src="src/vis-network/transformer.js"></script>
     <script type="text/javascript" src="src/vis-network/module.js"></script>
     <script type="text/javascript" src="src/processor.js"></script>
-
+    <script type="text/javascript">
+        var cacheLoaded = {
+            max   : 30000, // Max millisecond to wait
+            total : 2,     // Total number of cache to be loaded
+            count : 0,     // Number of cache loaded
+            list  : [],    // Id of cache loaded
+        }
+    </script>
 </head>
 <body>
 <div id="text">
     <div id="options">
-        Unison, <small>unifying JSON for artisans. </small><br><br>
+        Unison, <small>unifying JSON for artisans. </small>
+        <i class="fa fa-user"></i>
+        <br><br>
         <select id="urls"></select><br>
         <button id="refresh">Refresh</button>
         <button id="redraw">Redraw</button>
@@ -24,12 +34,25 @@
     <div id="editor"></div>
     <pre id="json" class="prettyprint"></pre>
 </div>
-
+<div id="node-container"></div>
 <div id="mynetwork"></div>
 <div id="myscript"></div>
+<div id="cache">
+    <object type="text/html" id="sprites-solid" data="assets/fontawesome/sprites/solid.svg" ></object>
+    <object type="text/html" id="sprites-brands" data="assets/fontawesome/sprites/brands.svg" ></object>
+</div>
 <script type="text/javascript">
 
-    $(document).ready(function () {
+    $('#sprites-solid').on('load', function (e) {
+        cacheLoaded.count ++;
+        cacheLoaded.list.push('sprites-solid');
+    });
+    $('#sprites-brands').on('load', function (e) {
+        cacheLoaded.count ++;
+        cacheLoaded.list.push('sprites-brands');
+    });
+
+    var allReady = function () {
         var editor;
         var network;
         var localKey;
@@ -39,6 +62,9 @@
         };
 
         var run = function () {
+            // Clean all cached nodes
+            $('#node-container').html('');
+
             var raw = editor.getValue().trim();
 
             localStorage.setItem('current:' + localKey, raw);
@@ -51,7 +77,7 @@
             var module = VisNetworkModule(config);
 
             network = new Processor(module).load(config).run();
-        }
+        };
 
         var loadEditor = function (data) {
 
@@ -189,6 +215,25 @@
         setUrl();
         // Local first else cached
         refresh(false, false);
+    }
+
+    $(document).ready(function (e) {
+        var start = 0;
+        var allReadyInterval = setInterval(function () {
+            start += 100;
+            if (cacheLoaded.total <= cacheLoaded.count)
+            {
+                clearInterval(allReadyInterval);
+                return allReady(e);
+            }
+
+            if (start > cacheLoaded.max)
+            {
+                clearInterval(allReadyInterval);
+                alert('Could not load the cache, Low network?');
+            }
+
+        }, 100)
     });
 
 </script>
