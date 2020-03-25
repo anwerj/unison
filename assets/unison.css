@@ -68,15 +68,16 @@ body,
 }
 
 #node-container{
-    display: none;
+    display: block;
     position: absolute;
     top: 10px;
     left: 10px;
-    width: 200px;
-    z-index: 1;
+    width: 100%;
+    z-index: -1;
     height: 100vh;
     overflow: scroll;
     color: #2d2d2d;
+    background: white;
 }
 .node{
     background: #fa8f90;
@@ -100,4 +101,8 @@ svg>text{
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
+}
+#node-container *{
+    margin-bottom: 0px !important;
+    margin-block-end: 0px !important;
 }

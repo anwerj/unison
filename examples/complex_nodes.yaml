@@ -2,7 +2,10 @@
 nodes:
   node1: {label: Node One}
   node2: {label: Node Two, fontawesome: trash}
+  node3: {label: "Node Three: A very long level set with the reference itself"}
 
 edges:
-  - to: {$ref: node2, id: node2-1, label: The very good level with no issues}
+  - to: {$ref: node2, id: node2-1, label: The very good level with no issues, but again who knows what happen when you do this}
     from: node1
+
+  - to: {$ref: node3, id: node3-1}

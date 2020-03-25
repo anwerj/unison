@@ -11,34 +11,33 @@ var VisNetworkModule = function (config) {
                 face : 'courier'
             },
             shapeProperties: {
-                borderRadius : 2,
+                borderRadius : 12,
                 useImageSize : true,
-                useBorderWithImage : true,
+                useBorderWithImage : false,
             },
             physics: false,
-            borderWidth: 1,
-            imagePadding: { left: 2, top: 2, right: 2, bottom: 2},
-            color: {
-                border: "rgba(0,0,0,0.1)",
-                background: "white",
-                highlight: {
-                    border: "black",
-                    background: "white"
-                },
-                hover: {
-                    border: "orange",
-                    background: "grey"
+            color : {
+                border : 'rgba(0,0,0,0)',
+                highlight : {
+                    border: 'rgba(0,0,0,0.2)',
+                }
+            },
+            chosen : {
+                node: function(values, id, selected, hovering)
+                {
+                    console.log(values, id, selected, hovering);
+                    values.shadow = true;
                 }
             },
         },
         edges:{
             arrows: {
-                middle : {
+                to : {
                     enabled : true,
                     type : 'arrow',
                 }
             },
-            color: 'red',
+            color: '#6a6a6a',
             font: {
                 align: 'horizontal',
                 color : '#333333',

@@ -6,6 +6,7 @@
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
     <script type="text/javascript" src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
     <script type="text/javascript" src="https://ace.c9.io/build/src/ace.js"></script>
     <script type="text/javascript" src="assets/base64.js"></script>
@@ -144,21 +145,26 @@
 
         var setUrl = function(url)
         {
-            var urls = [
-                new URL('examples/basic_3_nodes.json', location).toString(),
-                new URL('examples/complex_nodes.json', location).toString(),
-                new URL('examples/complex_upi.json5', location).toString(),
-                new URL('examples/complex_members.yaml', location).toString(),
-                new URL('examples/complex_upi.yaml', location).toString(),
-                new URL('examples/complex_nodes.yaml', location).toString(),
+            var examples = [
+                'complex_nodes.yaml',
+                'complex_members.yaml',
+                'complex_upi.yaml',
             ];
-            var index = (urls.length - 1)
+            var index = 0;
 
-            if (url && !(urls.findIndex(url)))
+            if (url)
             {
-                urls.push(url);
-                index = urls.findIndex(url);
+                if (examples.indexOf(url) === -1)
+                {
+                    examples.push(url);
+                }
+                index = examples.indexOf(url);
             }
+
+            var urls = [];
+            examples.forEach(function (item) {
+                urls.push(new URL('examples/' + item, location).toString());
+            });
 
             var html = '';
             for (var i = 0; i < urls.length; i++)
@@ -166,7 +172,7 @@
                 html += '<option value="' + urls[i] + '" ' + ((i === index) && 'selected') + '>' + urls[i] + '</option>';
             }
             $('#urls').html(html);
-        }
+        };
 
         $('#refresh').click(function () {
             if (_.refreshing)
@@ -212,10 +218,13 @@
             }
         });
 
-        setUrl();
+        var urlParams = new URLSearchParams(window.location.search);
+        var urlExample = urlParams.get('example');
+
+        setUrl(urlExample);
         // Local first else cached
         refresh(false, false);
-    }
+    };
 
     $(document).ready(function (e) {
         var start = 0;
