@@ -37,7 +37,7 @@ var VisNetworkTransformer = function (nodes, edges) {
         var bodyText = '';
         var textCount = 0;
         var headerTop = 22;
-        var headerLeft = 10;
+        var headerLeft = 5;
         var headerBack = true;
         var width = 0;
         var bodyColor = '#000000';
@@ -59,19 +59,19 @@ var VisNetworkTransformer = function (nodes, edges) {
 
         var tempDivId = 'temp-div-for-node-' + id;
 
-        $('#node-container').append('<div id="' + tempDivId + '" style="font-size: 16px; font-family: Courier;display: inline-block;" xmlns="http://www.w3.org/1999/xhtml">'+converter.makeHtml(body)+'</div>')
+        $('#node-container').append('<div id="' + tempDivId + '" style="font-size: 16px; font-family:Verdana;display: inline-block;" xmlns="http://www.w3.org/1999/xhtml">'+converter.makeHtml(body)+'</div>')
 
         width = Math.max($('#'+tempDivId).width() + 20, width);
         height = Math.max($('#'+tempDivId).height(), height);
 
         bodyText = '<foreignObject x="60" y="25" width="'+width+'" height="'+height+'">' +
-            '<div style="font-size: 16px; font-family: Courier;color: '+bodyColor+'" xmlns="http://www.w3.org/1999/xhtml">'+converter.makeHtml(body)+'</div>' +
+            '<div style="font-size: 16px; font-family:Verdana;color: '+bodyColor+'" xmlns="http://www.w3.org/1999/xhtml">'+converter.makeHtml(body)+'</div>' +
             '</foreignObject>';
 
         //$('#'+tempDivId).remove();
 
         var svg = '<svg id="svg-'+id+'" width="'+(width+50)+'" height="'+(height+30+4)+'"  xmlns="http://www.w3.org/2000/svg">' +
-            (headerBack && '<rect x="0" y="0" width="'+(width+50)+'" height="30" style="fill:#ffffff;opacity:1;"></rect>') +
+            (headerBack && '<rect x="0" y="0" width="'+(width+50)+'" height="30" style="fill:#ffffff;opacity:0.8;"></rect>') +
             '<rect x="0" y="30" width="'+(width+50)+'" height="'+(height+2)+'" style="fill:#f6f6f6;opacity:1;"></rect>' +
             '<rect x="0" y="30" width="50" height="'+(height +2)+'" style="fill:#fa8f90;opacity:1;"></rect>' +
             '<svg fill="#fa8f90" width="35" height="'+height+'" x="8" y="30" viewBox="'+icon.viewBox+'">' +
@@ -129,7 +129,6 @@ var VisNetworkTransformer = function (nodes, edges) {
 
         if (index === 0)
         {
-            node.fixed = true;
             node.physics =  false;
             node.x     = 0;
             node.y     = 0;
@@ -170,6 +169,11 @@ var VisNetworkTransformer = function (nodes, edges) {
 
             nodes.forEach(function (item, index) {
                 if ((item.source.length() === 0) && (item.target.length() === 0))
+                {
+                    return;
+                }
+
+                if (item.hidden)
                 {
                     return;
                 }

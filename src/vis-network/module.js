@@ -17,9 +17,8 @@ var VisNetworkModule = function (config) {
             },
             physics: false,
             color : {
-                border : 'rgba(0,0,0,0)',
                 highlight : {
-                    border: 'rgba(0,0,0,0.2)',
+                    background: '#ffffff',
                 }
             },
             chosen : {
@@ -27,6 +26,7 @@ var VisNetworkModule = function (config) {
                 {
                     console.log(values, id, selected, hovering);
                     values.shadow = true;
+                    values.shadowColor = 'rgba(0,0,0,0.1)'
                 }
             },
         },
@@ -62,7 +62,7 @@ var VisNetworkModule = function (config) {
                 shakeTowards: 'roots'
             }
         }
-    }
+    };
 
     var options = $.extend(true, {}, def, (config.vis || {}))
 

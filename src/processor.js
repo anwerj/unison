@@ -1,11 +1,13 @@
 /**
  *
+ * @param config
  * @param module
  * @returns {{load: (function(*): processorVisNetwork)}}
  */
-var Processor = function (module) {
+var Processor = function (config, module) {
 
     var nodes = {
+        startWith : config.options && config.options.startWithNode,
         _ : [],
         validate : function(node, key)
         {
@@ -14,8 +16,23 @@ var Processor = function (module) {
                 error('Node must have string id');
             }
         },
-        push : function (node, ) {
+        push : function (node) {
             this.validate(node);
+
+            if (this.startWith)
+            {
+                // Skip all the nodes which are before startwith
+                if (this.startWith !== node.id)
+                {
+                    node.hidden = true;
+                }
+                else
+                {
+                    // Once the startwith node found, unset the it
+                    this.startWith = null;
+                }
+            }
+
             if (this.exists(node) === -1)
             {
                 this._.push(node);
@@ -34,7 +51,7 @@ var Processor = function (module) {
             }
             return -1;
         }
-    }
+    };
 
     var edges = {
         _ : [],
@@ -75,7 +92,7 @@ var Processor = function (module) {
             }
             return -1;
         }
-    }
+    };
 
     var drafts = {
         /**
@@ -132,7 +149,7 @@ var Processor = function (module) {
 
     return {
 
-        load : function (config) {
+        load : function () {
 
             $.each(config.nodes, function (id, _)
             {
@@ -158,7 +175,7 @@ var Processor = function (module) {
                 if ('string' === typeof draft.to)
                 {
                     // If exists pick that one
-                    index = nodes.exists({id : draft.to})
+                    index = nodes.exists({id : draft.to});
                     if (index > -1)
                     {
                         to = nodes._[index];
@@ -266,7 +283,7 @@ var Processor = function (module) {
                 else if ('string' === typeof draft.from)
                 {
                     // If exists pick that one
-                    index = nodes.exists({id : draft.from})
+                    index = nodes.exists({id : draft.from});
                     if (index > -1)
                     {
                         from = nodes._[index];
@@ -347,7 +364,7 @@ var Processor = function (module) {
             module.run(nodes._, edges._);
         }
     }
-}
+};
 
 var links = function (expected) {
     var e = (expected === undefined) ? undefined : parseInt(expected);

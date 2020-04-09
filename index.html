@@ -77,7 +77,7 @@
             // Create display module
             var module = VisNetworkModule(config);
 
-            network = new Processor(module).load(config).run();
+            network = new Processor(config, module).load().run();
         };
 
         var loadEditor = function (data) {
