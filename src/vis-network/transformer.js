@@ -32,7 +32,7 @@ var VisNetworkTransformer = function (nodes, edges) {
         return svg;
     };
 
-    var getSvgDesignThree = function (id, icon, header, body) {
+    var getSvgDesignThree = function (item, icon, header, body) {
 
         var bodyText = '';
         var textCount = 0;
@@ -40,14 +40,16 @@ var VisNetworkTransformer = function (nodes, edges) {
         var headerLeft = 5;
         var headerBack = true;
         var width = 0;
-        var bodyColor = '#000000';
+        var color = item.color || '#fa8f90';
+        var bodyColor = item.bodyColor || '#000000';
+        var background = item.background || '#f6f6f6';
         var height = 48;
 
         if (! body)
         {
             body = header;
             header = '';
-            bodyColor = '#fa8f90';
+            console.log(color);
             headerBack = false;
             headerLeft = 0;
         }
@@ -57,7 +59,7 @@ var VisNetworkTransformer = function (nodes, edges) {
             width = (header.length * 10);
         }
 
-        var tempDivId = 'temp-div-for-node-' + id;
+        var tempDivId = 'temp-div-for-node-' + item.id;
 
         $('#node-container').append('<div id="' + tempDivId + '" style="font-size: 16px; font-family:Verdana;display: inline-block;" xmlns="http://www.w3.org/1999/xhtml">'+converter.makeHtml(body)+'</div>')
 
@@ -70,14 +72,14 @@ var VisNetworkTransformer = function (nodes, edges) {
 
         //$('#'+tempDivId).remove();
 
-        var svg = '<svg id="svg-'+id+'" width="'+(width+50)+'" height="'+(height+30+4)+'"  xmlns="http://www.w3.org/2000/svg">' +
+        var svg = '<svg id="svg-'+item.id+'" width="'+(width+50)+'" height="'+(height+30+4)+'"  xmlns="http://www.w3.org/2000/svg">' +
             (headerBack && '<rect x="0" y="0" width="'+(width+50)+'" height="30" style="fill:#ffffff;opacity:0.8;"></rect>') +
-            '<rect x="0" y="30" width="'+(width+50)+'" height="'+(height+2)+'" style="fill:#f6f6f6;opacity:1;"></rect>' +
-            '<rect x="0" y="30" width="50" height="'+(height +2)+'" style="fill:#fa8f90;opacity:1;"></rect>' +
-            '<svg fill="#fa8f90" width="35" height="'+height+'" x="8" y="30" viewBox="'+icon.viewBox+'">' +
+            '<rect x="0" y="30" width="'+(width+50)+'" height="'+(height+2)+'" style="fill:' + background + ';opacity:1;"></rect>' +
+            '<rect x="0" y="30" width="50" height="'+(height +2)+'" style="fill:'+ color +';opacity:1;"></rect>' +
+            '<svg fill="'+ color +'" width="35" height="'+height+'" x="8" y="30" viewBox="'+icon.viewBox+'">' +
             '<path style="fill:#ffffff;" d="'+icon.pathD+'"></path>' +
             '</svg>' +
-            '<text style="fill:#fa8f90;text-align: center;align-content: center" font-size="16" font-family="monospace" x="'+headerLeft+'" y="'+headerTop+'">'+header+'</text>' +
+            '<text style="fill:'+ color +';text-align:center;align-content:center;font-weight: bold" font-size="16" font-family="monospace" x="'+headerLeft+'" y="'+headerTop+'">'+header+'</text>' +
             bodyText +
             '</svg>';
 
@@ -88,7 +90,7 @@ var VisNetworkTransformer = function (nodes, edges) {
         // Default for 1 children
         var shape = 'box';
         var toLength = item.target.all().length;
-        var headerIcon  = item.icon     || ((item.ref && item.ref.icon) || 'dice-d6');
+        var headerIcon  = item.icon || 'dice-d6';
         var headerLabel = item.label    || ((item.ref && item.ref.label) || '');
         var bodyLabel   = item.content  || '';
 
@@ -113,7 +115,7 @@ var VisNetworkTransformer = function (nodes, edges) {
             pathD   : symbol.getElementsByTagName('path')[0].getAttribute('d'),
         };
 
-        var svg = getSvgDesignThree(item.id, icon, headerLabel, bodyLabel);
+        var svg = getSvgDesignThree(item, icon, headerLabel, bodyLabel);
 
         $('#node-container').append(svg);
 

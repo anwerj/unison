@@ -103,11 +103,10 @@ var Processor = function (config, module) {
          */
         node : function (i, d) {
 
-            console.debug(i, d);
+            console.log(i, d);
             var draft = {
                 _       : 'node',
                 ref     : d.id      && (d.ref || d),
-                icon    : d.icon    && (d.icon || ''),
                 id      : i.id,
                 content : i.content,
                 label   : (i.label  || d.label) || i.id,
@@ -120,6 +119,8 @@ var Processor = function (config, module) {
                 },
                 target  : new links(i.t),
                 source  : new links(i.s),
+                color : i.color || d.color,
+                icon  : i.icon  || d.icon,
             };
 
             return draft;

@@ -1,67 +1,79 @@
 var VisNetworkModule = function (config) {
 
     var def = {
+      interaction: {
+        zoomView: true,
+        keyboard: {
+          enabled: true,
+          speed: { x: 10, y: 10, zoom: 0.02 },
+          bindToWindow: false,
+        },
+        navigationButtons: true,
+      },
+      physics: {
+        hierarchicalRepulsion: {
+          avoidOverlap: 1,
+        },
+      },
+      manipulation: {
+        enabled: false,
+      },
+      nodes: {
+        font: {
+          size: 14,
+          face: "courier",
+        },
+        shapeProperties: {
+          borderRadius: 12,
+          useImageSize: true,
+          useBorderWithImage: false,
+        },
         physics: false,
-        manipulation: {
-            enabled : true,
+        color: {
+          highlight: {
+            background: "#ffffff",
+          },
         },
-        nodes : {
-            font : {
-                size : 14,
-                face : 'courier'
-            },
-            shapeProperties: {
-                borderRadius : 12,
-                useImageSize : true,
-                useBorderWithImage : false,
-            },
-            physics: false,
-            color : {
-                highlight : {
-                    background: '#ffffff',
-                }
-            },
-            chosen : {
-                node: function(values, id, selected, hovering)
-                {
-                    console.log(values, id, selected, hovering);
-                    values.shadow = true;
-                    values.shadowColor = 'rgba(0,0,0,0.1)'
-                }
-            },
+        chosen: {
+          node: function (values, id, selected, hovering) {
+            console.log(values, id, selected, hovering);
+            values.shadow = true;
+            values.shadowColor = "rgba(0,0,0,0.1)";
+          },
         },
-        edges:{
-            arrows: {
-                to : {
-                    enabled : true,
-                    type : 'arrow',
-                }
-            },
-            color: '#6a6a6a',
-            font: {
-                align: 'horizontal',
-                color : '#333333',
-                strokeWidth: 4,
-                strokeColor: "#ffffff",
-                vadjust : 2,
-            },
-            smooth: false,
-            physics: false,
+      },
+      edges: {
+        arrows: {
+          to: {
+            enabled: true,
+            type: "arrow",
+          },
         },
-        layout: {
-            hierarchical: {
-                enabled: true,
-                levelSeparation : 150,
-                nodeSpacing : 800,
-                treeSpacing : 200,
-                blockShifting: true,
-                edgeMinimization : true,
-                parentCentralization : true,
-                direction: 'UD',
-                sortMethod: 'directed',
-                shakeTowards: 'roots'
-            }
-        }
+        color: "#6a6a6a",
+        font: {
+          align: "horizontal",
+          color: "#333333",
+          strokeWidth: 4,
+          strokeColor: "#ffffff",
+          vadjust: 2,
+        },
+        smooth: false,
+        physics: false,
+      },
+      layout: {
+        hierarchical: {
+          enabled: true,
+          levelSeparation: 150,
+          nodeSpacing: 500,
+          treeSpacing: 200,
+          blockShifting: true,
+          edgeMinimization: false,
+          parentCentralization: true,
+          direction: "UD",
+          sortMethod: "hubsize",
+          shakeTowards: "roots",
+        },
+      },
     };
 
     var options = $.extend(true, {}, def, (config.vis || {}))
